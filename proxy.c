@@ -627,13 +627,16 @@ static int on_accept(struct poolhd *pool, struct eval *val, int et)
             close(c);
             continue;
         }
-        if (!(rval = add_event(pool, &on_request, c, POLLIN))) {
+        evcb_t cb = params.mode == MODE_HTTP ?
+            &on_http_request : &on_request;
+        if (!(rval = add_event(pool, cb, c, POLLIN))) {
             close(c);
             continue;
         }
         rval->addr = client;
         #ifdef __linux__
-        if (params.transparent && transp_conn(pool, rval) < 0) {
+        if (params.mode == MODE_SOCKS5 && params.transparent &&
+                transp_conn(pool, rval) < 0) {
             del_event(pool, rval);
             continue;
         }
@@ -811,6 +814,31 @@ int on_udp_tunnel(struct poolhd *pool, struct eval *val, int et)
     return 0;
 }
 
+
+int on_http_request(struct poolhd *pool, struct eval *val, int et)
+{
+    union sockaddr_u dst = {0};
+    struct buffer *buff = buff_ppop(pool, params.bfsize);
+    if (!buff) {
+        return -1;
+    }
+    ssize_t n = recv(val->fd, buff->data, buff->size, 0);
+    if (n < 1) {
+        if (n) uniperror("recv");
+        return -1;
+    }
+    if (!is_http(buff->data, n) || http_get_addr(buff->data, n, &dst)) {
+        LOG(LOG_E, "invalid http request\n");
+        return -1;
+    }
+    val->flag = FLAG_CONN;
+    val->sq_buff = buff;
+    if (connect_hook(pool, val, &dst, &on_connect)) {
+        uniperror("connect_hook");
+        return -1;
+    }
+    return 0;
+}
 
 int on_request(struct poolhd *pool, struct eval *val, int et)
 {

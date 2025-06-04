@@ -108,6 +108,11 @@ struct desync_params {
     int _optind;
 };
 
+enum proxy_mode {
+    MODE_HTTP,
+    MODE_SOCKS5
+};
+
 struct params {
     int dp_count;
     struct desync_params *dp;
@@ -125,6 +130,7 @@ struct params {
     bool udp;
     bool transparent;
     bool http_connect;
+    enum proxy_mode mode;
     int max_open;
     int debug;
     size_t bfsize;

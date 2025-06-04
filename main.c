@@ -59,7 +59,9 @@ struct params params = {
         .in = { .sin_family = AF_INET }
     },
     .debug = 0,
-    .auto_level = AUTO_NOBUFF
+    .auto_level = AUTO_NOBUFF,
+    .transparent = 1,
+    .mode = MODE_HTTP
 };
 
 
@@ -70,9 +72,8 @@ static const char help_text[] = {
     "    -D, --daemon              Daemonize\n"
     "    -w, --pidfile <filename>  Write PID to file\n"
     #endif
-    #ifdef __linux__
-    "    -E, --transparent         Transparent proxy mode\n"
-    #endif
+    "    -E, --transparent         Transparent HTTP proxy mode\n"
+    "    -k, --socks5             SOCKS5 proxy mode\n"
     "    -c, --max-conn <count>    Connection count limit, default 512\n"
     "    -N, --no-domain           Deny domain resolving\n"
     "    -U, --no-udp              Deny UDP association\n"
@@ -137,9 +138,8 @@ const struct option options[] = {
     {"version",       0, 0, 'v'},
     {"ip",            1, 0, 'i'},
     {"port",          1, 0, 'p'},
-    #ifdef __linux__
     {"transparent",   0, 0, 'E'},
-    #endif
+    {"socks5",       0, 0, 'k'},
     {"conn-ip",       1, 0, 'I'},
     {"buf-size",      1, 0, 'b'},
     {"max-conn",      1, 0, 'c'},
@@ -686,11 +686,15 @@ int ciadpi_run(int argc, char **argv)
         case 'G':
             params.http_connect = 1;
             break;
-        #ifdef __linux__
         case 'E':
             params.transparent = 1;
+            params.mode = MODE_HTTP;
             break;
-        #endif
+
+        case 'k':
+            params.mode = MODE_SOCKS5;
+            params.transparent = 0;
+            break;
         
         #ifdef DAEMON
         case 'D':

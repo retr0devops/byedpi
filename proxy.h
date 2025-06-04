@@ -95,6 +95,8 @@ int on_tunnel(struct poolhd *pool, struct eval *val, int etype);
 
 int on_udp_tunnel(struct poolhd *pool, struct eval *val, int et);
 
+int on_http_request(struct poolhd *pool, struct eval *val, int et);
+
 int on_request(struct poolhd *pool, struct eval *val, int et);
 
 int on_connect(struct poolhd *pool, struct eval *val, int et);
