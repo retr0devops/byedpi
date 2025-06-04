@@ -8,6 +8,7 @@
 #include "proxy.h"
 #include "packets.h"
 #include "error.h"
+#include "ciadpi.h"
 
 #ifndef _WIN32
     #include <arpa/inet.h>
@@ -617,7 +618,7 @@ void clear_params(void)
 }
 
 
-int main(int argc, char **argv) 
+int ciadpi_run(int argc, char **argv)
 {
     #ifdef _WIN32
     WSADATA wsa;
@@ -1173,3 +1174,10 @@ int main(int argc, char **argv)
     clear_params();
     return status;
 }
+
+#ifndef CIADPI_LIB
+int main(int argc, char **argv)
+{
+    return ciadpi_run(argc, argv);
+}
+#endif

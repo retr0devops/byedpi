@@ -1,5 +1,6 @@
 .vscode
 ciadpi.exe
 ciadpi
+libciadpi.a
 *.o
 compile_flags.txt
