@@ -36,6 +36,12 @@ install: $(TARGET)
 httpproxy: http_proxy.o
 	$(CC) -o httpproxy http_proxy.o -lcurl -lpthread
 
+httpproxy_native: httpproxy_native.o
+	$(CC) -o httpproxy_native httpproxy_native.o -lnghttp2 -lssl -lcrypto -lpthread
+
+httpproxy_native.o: httpproxy_native.c
+	$(CC) $(CPPFLAGS) $(CFLAGS) -c httpproxy_native.c
+
 
 http_proxy.o: http_proxy.c
 	$(CC) $(CPPFLAGS) $(CFLAGS) -c http_proxy.c
