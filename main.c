@@ -1145,6 +1145,10 @@ int main(int argc, char **argv)
     if (params.baddr.sa.sa_family != AF_INET6) {
         params.ipv6 = 0;
     }
+    if (!params.ipv6 && params.baddr.sa.sa_family == AF_INET6) {
+        params.baddr.sa.sa_family = AF_INET;
+        params.baddr.in.sin_addr.s_addr = INADDR_ANY;
+    }
     if (!params.def_ttl) {
         if ((params.def_ttl = get_default_ttl()) < 1) {
             clear_params();
