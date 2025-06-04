@@ -32,3 +32,10 @@ clean:
 install: $(TARGET)
 	mkdir -p $(INSTALL_DIR)
 	install -m 755 $(TARGET) $(INSTALL_DIR)
+
+httpproxy: http_proxy.o
+	$(CC) -o httpproxy http_proxy.o -lcurl -lpthread
+
+
+http_proxy.o: http_proxy.c
+	$(CC) $(CPPFLAGS) $(CFLAGS) -c http_proxy.c
