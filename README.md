@@ -1,5 +1,5 @@
 Implementation of some DPI bypass methods.
-The program is a local SOCKS proxy server.
+The program can work either as a transparent HTTP proxy or as a SOCKS5 proxy.
 
 Usage example:
 ```
@@ -24,7 +24,9 @@ ciadpi --fake -1 --ttl 8
     Расположение PID-файла
 
 -E, --transparent
-    Запуск в режиме прозрачного прокси, SOCKS работать не будет
+    Запуск в режиме прозрачного HTTP-прокси
+-k, --socks5
+    Запуск в режиме SOCKS5-прокси
     
 -c, --max-conn <count>
     Максимальное количество клиентских подключений, по умолчанию 512
