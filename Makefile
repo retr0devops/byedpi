@@ -11,6 +11,9 @@ WIN_SRC = win_service.c
 OBJ = $(SRC:.c=.o)
 WIN_OBJ = $(WIN_SRC:.c=.o)
 
+LIB_OBJ = $(patsubst %.c,lib_%.o,$(SRC))
+LIBTARGET = libciadpi.a
+
 PREFIX := /usr/local
 INSTALL_DIR := $(DESTDIR)$(PREFIX)/bin/
 
@@ -22,12 +25,24 @@ $(TARGET): $(OBJ)
 windows: $(OBJ) $(WIN_OBJ)
 	$(CC) -o $(TARGET).exe $(OBJ) $(WIN_OBJ) $(WIN_LDFLAGS)
 
+
+
+
+lib: $(LIBTARGET)
+	
+$(LIBTARGET): $(LIB_OBJ)
+	ar rcs $@ $(LIB_OBJ)
+	
+$(LIB_OBJ): $(HEADERS)
+lib_%.o: %.c
+	$(CC) $(CPPFLAGS) $(CFLAGS) -DCIADPI_LIB -c $< -o $@
+
 $(OBJ): $(HEADERS)
 .c.o:
 	$(CC) $(CPPFLAGS) $(CFLAGS) -c $<
 
 clean:
-	rm -f $(TARGET) $(TARGET).exe $(OBJ) $(WIN_OBJ)
+	rm -f $(TARGET) $(TARGET).exe $(OBJ) $(WIN_OBJ) $(LIB_OBJ) $(LIBTARGET)
 
 install: $(TARGET)
 	mkdir -p $(INSTALL_DIR)
